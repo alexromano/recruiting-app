@@ -7,6 +7,7 @@ import { ExtractionService } from '../extraction/extraction.service';
 
 export type JobBoard = {
     url: string;
+    image_url: string;
     slug: string;
     company: string;
     platform: string;

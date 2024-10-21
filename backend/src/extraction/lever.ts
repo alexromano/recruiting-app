@@ -10,9 +10,11 @@ export class LeverExtractor implements Extractor {
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
         const title = $('title').text();
+        const image_url = $('a.main-header-logo img').attr('src') || "";
         
         return {
             url,
+            image_url,
             slug: url.split('/').pop() || '',
             company: title,
             platform: 'lever',
