@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import axios from 'axios';
 
 import { Extractor } from './extraction.service';
@@ -44,9 +44,11 @@ export class LeverExtractor implements Extractor {
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
 
-        const headline = $('div.posting-headline div.posting-categories');
+        const title = $('div.posting-headline h2').text();
+
+        const categoriesElement = $('div.posting-headline div.posting-categories');
         const categories:string[] = [];
-        headline.children().each((_, element) => {
+        categoriesElement.children().each((_, element) => {
             categories.push(...cleanText($(element).text()));
         });
 
@@ -71,6 +73,7 @@ export class LeverExtractor implements Extractor {
         }, null);
 
         return {
+            title,
             locations: cityParse(categories),
             yoe,
             salaryRange,

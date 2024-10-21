@@ -6,22 +6,23 @@ import { getDbCollections } from '../db/utils';
 import { ExtractionService } from '../extraction/extraction.service';
 
 export type JobBoard = {
-  url: string;
-  slug: string;
-  company: string;
-  platform: string;
+    url: string;
+    slug: string;
+    company: string;
+    platform: string;
 }
 
 export type Job = {
-  title: string;
-  url: string;
+    title: string;
+    url: string;
 }
 
 export type JobDescription = {
-  locations: string[] | null;
-  yoe: string | null;
-  salaryRange: string[] | null;
-  // team?: string,
+    title: string;
+    locations: string[] | null;
+    yoe: string | null;
+    salaryRange: string[] | null;
+    // team?: string,
 }
 
 
