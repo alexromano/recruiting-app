@@ -1,45 +1,38 @@
 "use client"
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Plus } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
-import { useState } from 'react';
+import * as JobCard from "@/components/job-card";
+import { Skeleton } from '@/components/ui/skeleton';
+import { Job, fetchJobs } from "@/lib/api";
+
 
 export default function Home() {
   const [url, setUrl] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const jobs = [
-    {
-      id: 1,
-      title: "Senior Software Engineer",
-      company: "Tech Corp",
-      location: "San Francisco, CA",
-      type: "Full-time",
-      posted: "2 days ago"
-    },
-    {
-      id: 2,
-      title: "Product Manager",
-      company: "Innovation Labs",
-      location: "New York, NY",
-      type: "Full-time",
-      posted: "1 week ago"
-    },
-    ...Array.from({ length: 8 }, (_, i) => ({
-      id: i + 3,
-      title: `Position ${i + 3}`,
-      company: `Company ${i + 3}`,
-      location: "Remote",
-      type: "Full-time",
-      posted: "3 days ago"
-    }))
-  ];
+  useEffect(() => {
+    const loadJobs = async () => {
+      try {
+        const data = await fetchJobs();
+        setJobs(data);
+      } catch (error) {
+        console.error('Failed to fetch jobs:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadJobs();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,6 +40,7 @@ export default function Home() {
     setUrl('');
     setIsDialogOpen(false);
   };
+
   return (
     <div className="p-8 h-screen flex flex-col items-center">
       {/* Container with max-width */}
@@ -89,25 +83,15 @@ export default function Home() {
         {/* Scrollable job listings */}
         <ScrollArea className="flex-grow rounded-md border h-[calc(100vh-8rem)]">
           <div className="p-4 space-y-4">
-            {jobs.map(job => (
-              <Card key={job.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl">{job.title}</CardTitle>
-                      <CardDescription>{job.company}</CardDescription>
-                    </div>
-                    <span className="text-sm text-muted-foreground">{job.posted}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex gap-4">
-                    <span className="text-sm text-muted-foreground">{job.location}</span>
-                    <span className="text-sm text-muted-foreground">{job.type}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="h-20 w-full" />
+              ))
+            ): (
+              jobs.map(job => (
+                <JobCard.default key={job.id} job={job} />
+              ))
+            )}
           </div>
         </ScrollArea>
       </div>
