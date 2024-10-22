@@ -56,7 +56,6 @@ export class JobsService {
   async addJobBoard(url: string) {
     const extractor = this.extractionService.getExtractor(url);
     if  (!extractor) return;
-    console.log(extractor);
 
     const jobBoardDetails = await extractor.getJobBoardDetails(url);
 

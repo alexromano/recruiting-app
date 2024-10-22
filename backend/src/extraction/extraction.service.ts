@@ -13,11 +13,9 @@ export interface Extractor {
 export class ExtractionService {
     getExtractor(url: string): Extractor | null {
         const parsedURL = URL.parse(url);
-        console.log(parsedURL);
         if (!parsedURL) throw new Error(`Failed to parse URL: ${url}`);
 
         const domain = parsedURL.hostname;
-        console.log(domain);
         if (domain.includes('lever.co')) {
             return new LeverExtractor();
         }
