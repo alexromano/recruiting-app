@@ -8,8 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import * as JobCard from "@/components/job-card";
-import { Skeleton } from '@/components/ui/skeleton';
+import * as JobCard from "@/components/ui/job-card";
 import { Job, fetchJobs } from "@/lib/api";
 
 
@@ -31,7 +30,7 @@ export default function Home() {
       }
     };
 
-    loadJobs();
+    // loadJobs();
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,7 +84,7 @@ export default function Home() {
           <div className="p-4 space-y-4">
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
-                <Skeleton key={index} className="h-20 w-full" />
+                <JobCard.Skeleton key={index} />
               ))
             ): (
               jobs.map(job => (
