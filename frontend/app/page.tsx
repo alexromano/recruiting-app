@@ -30,7 +30,7 @@ export default function Home() {
       }
     };
 
-    // loadJobs();
+    loadJobs();
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
