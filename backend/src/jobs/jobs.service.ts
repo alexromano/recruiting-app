@@ -26,13 +26,15 @@ export type JobDescription = {
     // team?: string,
 }
 
+export type JobDetailsResponse = JobBoard & Job & JobDescription;
+
 
 @Injectable()
 export class JobsService {
   private readonly logger = new Logger(JobsService.name);
   constructor(private readonly extractionService: ExtractionService) {}
 
-  async getJobs() {
+  async getJobs(): Promise<JobDetailsResponse[]> {
     const {user, jobBoard} = getDbCollections();
     const oneUser = await user.findOne({})
     const keywords = oneUser ? oneUser.keywords : [];
@@ -45,7 +47,15 @@ export class JobsService {
       const details = await Bluebird.map(jobs, async (job) => {
         const extractor = this.extractionService.getExtractor(job.url);
         if  (!extractor) return null;
-        return extractor.getJobDetails(job.url);
+        const jobDetails = await extractor.getJobDetails(job.url);
+        return {
+          image_url: board.image_url,
+          slug: board.slug,
+          company: board.company,
+          platform: board.platform,
+          url: job.url,
+          ...jobDetails
+        }
       })
       return details.filter(detail => detail !== null);
     });
@@ -61,12 +71,18 @@ export class JobsService {
 
     this.logger.log(`Adding job board ${url} with details ${JSON.stringify(jobBoardDetails)}`);
     const { jobBoard} = getDbCollections();
-    await jobBoard.insertOne({
-        id: uuidv4(),
-        ...jobBoardDetails,
-        created_at: new Date(),
-        updated_at: new Date(),
-    });
+    await jobBoard.updateOne(
+      { url },
+      {
+        $set: {
+          id: uuidv4(),
+          ...jobBoardDetails,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      },
+      { upsert: true }
+    );
   }
 
   async getJobBoards() {

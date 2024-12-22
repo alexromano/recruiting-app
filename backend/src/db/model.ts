@@ -2,6 +2,7 @@
 export interface JobBoard {
     id: string
     url: string
+    image_url: string
     company: string
     slug: string
     platform: string
